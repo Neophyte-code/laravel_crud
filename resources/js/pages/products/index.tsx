@@ -36,7 +36,7 @@ export default function Index() {
                             <tr>
                                 <td className='px-4 py-2 text-center border'>1</td>
                                 <td className='px-4 py-2 text-center border'>Phone</td>
-                                <td className='px-4 py-2 text-center border'>Thisis mobile phone</td>
+                                <td className='px-4 py-2 text-center border'>This is mobile phone</td>
                                 <td className='px-4 py-2 text-center border'>10000</td>
                                 <td className='px-4 py-2 text-center border'></td>
                                 <td className='px-4 py-2 text-center border'>2025-5-1</td>
