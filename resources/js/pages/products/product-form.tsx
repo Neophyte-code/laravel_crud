@@ -1,3 +1,4 @@
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CustomTextarea } from '@/components/ui/custom-textarea';
@@ -7,7 +8,8 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import products from '@/routes/products';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { Description } from '@radix-ui/react-dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,6 +19,31 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ProductForm() {
+
+    const {data, setData, post, processing, errors, reset} = useForm({
+        name: '',
+        description: '',
+        price: '',
+        featured_image: null as File | null
+    });
+
+    // form submit handler
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
+        // prevent  the  page from  reloading
+        e.preventDefault();
+            //route(products.store)
+        post('/products', {
+            onSuccess: () => console.log('form submitted')
+        })
+    }
+
+    //handle file upload
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if(e.target.files && e.target.files.length > 0){
+            setData('featured_image', e.target.files[0])
+        }
+        }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Products" />
@@ -31,13 +58,15 @@ export default function ProductForm() {
                         <CardTitle>Create Products</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form className='flex flex-col gap-4' autoComplete='off'>
+                        <form onSubmit={submit} className='flex flex-col gap-4' autoComplete='off'>
                             <div className='grid gap-6'>
 
                                 {/* Product name */}
                                 <div className='grid gap-2'>
                                     <Label htmlFor='name'>Product name</Label>
-                                    <Input
+                                    <Input 
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
                                     id='name'
                                     name='name'
                                     type='text'
@@ -45,24 +74,35 @@ export default function ProductForm() {
                                     autoFocus
                                     tabIndex={1}
                                     />
+
+                                    <InputError message={errors.name}/>
                                 </div>
+                                
 
                                 {/* Description */}
                                 <div className='grid gap-2'>
                                     <Label htmlFor='description'>Description</Label>
 
                                     <CustomTextarea 
+                                    value={data.description}
+                                    onChange={(e) => setData('description', e.target.value)}
                                     id='description' 
                                     name='description' 
                                     tabIndex={2} 
                                     placeholder='Product description'
                                     />
+
+                                    <InputError message={errors.description} />
                                 </div>
+                                
 
                                  {/* Product Price */}
                                 <div className='grid gap-2'>
                                     <Label htmlFor='price'>Product price</Label>
+
                                     <Input
+                                    value={data.price}
+                                    onChange={(e) => setData('price', e.target.value)}
                                     id='price'
                                     name='price'
                                     type='text'
@@ -70,19 +110,28 @@ export default function ProductForm() {
                                     autoFocus
                                     tabIndex={3}
                                     />
+
+                                    <InputError message={errors.price} />
                                 </div>
+                                
+
 
                                  {/* Featured Image */}
                                 <div className='grid gap-2'>
                                     <Label htmlFor='featured_image'>Featured image</Label>
                                     <Input
+                                    onChange={handleFileUpload}
                                     id='featured_image'
                                     name='featured_image'
                                     type='file'
                                     autoFocus
                                     tabIndex={4}
                                     />
+
+                                    <InputError message={errors.featured_image} />
                                 </div>
+
+                                
 
                                 {/* Submit Button */}
                                 <Button
