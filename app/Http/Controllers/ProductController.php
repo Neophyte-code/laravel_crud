@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductFormRequest;
 use App\Models\Product;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -32,8 +34,35 @@ class ProductController extends Controller
      */
     public function store(ProductFormRequest $request)
     {
-        //
-        dd($request->all());
+        try {
+            $featuredImage = null;
+            $featuredImageOriginalName = null;
+
+            if ($request->hasFile('featured_image')) {
+                $file = $request->file('featured_image');
+                $featuredImageOriginalName = $file->getClientOriginalName();
+                $featuredImage = $file->store('products', 'public');
+            }
+
+            // Create the product
+            $product = Product::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'featured_image' => $featuredImage,
+                'featured_image_original_name' => $featuredImageOriginalName
+            ]);
+
+            if ($product) {
+                //return the redirect
+                return redirect()->route('products.index')->with('success', 'Product created successfully');
+            }
+
+            return redirect()->back()->with('error', 'Unable to create product. Please try again.');
+        } catch (\Exception $e) {
+
+            Log::error('Product creation failed: ' . $e->getMessage());
+        }
     }
 
     /**

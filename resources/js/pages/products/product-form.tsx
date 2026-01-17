@@ -31,7 +31,7 @@ export default function ProductForm() {
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         // prevent  the  page from  reloading
         e.preventDefault();
-            //route(products.store)
+        //route(products.store)
         post('/products', {
             onSuccess: () => console.log('form submitted')
         })

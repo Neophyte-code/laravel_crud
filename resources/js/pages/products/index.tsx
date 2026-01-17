@@ -1,6 +1,7 @@
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,10 +11,27 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index() {
+
+    // // get the flash message from session
+    // const { flash } = usePage<{flash?: {success?: string; error?: string}}>().props;
+    
+
+    const { flash } = usePage<{ flash?: { success?: string; error?: string }}>().props;
+    const flashMessage = flash?.success || flash?.error
+
+    console.log('flash', flash);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+
+            {(flash?.success || flash?.error) && (
+            <Alert variant={'default'}>
+                <AlertTitle>{ flash.success ? 'Success' : 'Error'}</AlertTitle>
+                <AlertDescription>{ flashMessage }</AlertDescription>
+            </Alert>
+            )}
 
                 <div className='ml-auto'>
                     <Link className='bg-indigo-700 px-2 py-2 rounded-lg text-white text-md cursor-pointer hover:opacity-90' as='button' href={'/products/create'}>Add Product</Link>
