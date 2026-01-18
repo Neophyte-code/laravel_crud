@@ -11,7 +11,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Index() {
+interface Product{
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    featured_image: string,
+    created_at: string
+}
+
+export default function Index({...props}: {products: Product[]} ) {
+    const { products } = props; 
 
     const { flash } = usePage<{ flash?: { success?: string; error?: string }}>().props;
     const flashMessage = flash?.success || flash?.error
@@ -56,15 +66,19 @@ export default function Index() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td className='px-4 py-2 text-center border'>1</td>
-                                <td className='px-4 py-2 text-center border'>Phone</td>
-                                <td className='px-4 py-2 text-center border'>This is mobile phone</td>
-                                <td className='px-4 py-2 text-center border'>10000</td>
-                                <td className='px-4 py-2 text-center border'></td>
-                                <td className='px-4 py-2 text-center border'>2025-5-1</td>
+                            {products.map((product, index) => (
+                                <tr key={index}>
+                                <td className='px-4 py-2 text-center border'>{ index + 1}</td>
+                                <td className='px-4 py-2 text-center border'>{ product.name }</td>
+                                <td className='px-4 py-2 text-center border'>{ product.description }</td>
+                                <td className='px-4 py-2 text-center border'>{ product.price }</td>
+                                <td className='px-4 py-2 text-center border'>
+                                    <img src={product.featured_image} alt={product.name} className='h-16 w-16 object-cover'/>
+                                </td>
+                                <td className='px-4 py-2 text-center border'>{ product.created_at }</td>
                                 <td className='px-4 py-2 text-center border'></td>
                             </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

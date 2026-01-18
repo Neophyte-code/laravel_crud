@@ -16,7 +16,21 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Inertia::render('products/index');
+        //Get the data from model
+        $product = Product::latest()->get()->map(fn($product) => [
+            'id' => $product->id,
+            'name' => $product->name,
+            'description' => $product->description,
+            'price' => $product->price,
+            'featured_image' => $product->featured_image,
+            'featured_image_original_name' => $product->featured_image_original_name,
+            'created_at' => $product->created_at->format('M d Y')
+        ]);
+
+        //Render the data to the view
+        return Inertia::render('products/index', [
+            'products' => $product
+        ]);
     }
 
     /**
